@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./blogapi/
+      dockerfile: dev-backend.Dockerfile
+    image: blog-api
+    env_file:
+      - ./blogapi/.env
+    volumes:
+      - ./blogapi:/code
+    ports:
+      - 8000:8000
+    command: python manage.py runserver 0.0.0.0:8000
+
+  frontend:
+    build: 
+      context: ./blog_frontend/
+      dockerfile: dev-frontend.Dockerfile
+    image: blog-fe
+    volumes:
+      - ./blog_frontend:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - CORSHEADER="http://localhost:8000"
+      - PROXY=true
+    depends_on: 
+      - backend
