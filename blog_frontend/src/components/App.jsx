@@ -1,79 +1,64 @@
 import React, { Component } from 'react';
-import axios from 'axios';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Auth } from 'aws-amplify';
 
-import LoginForm from './LoginForm';
-import BlogPosts from './BlogPosts';
+import LoginForm from './auth/LoginForm';
+import Register from './auth/Register';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayedForm: 'login',
-      loggedIn: !!localStorage.getItem('token'),
-      username: '',
+      user: null,
+      isLoggedIn: false,
+      isLoggingIn: true, // if an ongoing process.
     };
   }
 
-  componentDidMount() {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      this.handleLogout();
+  async componentDidMount() {
+    try {
+      await Auth.currentSession();
+      this.setState({ isLoggedIn: true });
+      const user = await Auth.currentAuthenticatedUser();
+      this.setState({ user });
+    } catch (error) {
+      console.log(error);
     }
+    this.setState({ isLoggingIn: false });
   }
 
-  handleLogin = (e, data) => {
-    e.preventDefault();
-    axios
-      .post('http://localhost:8000/api/token/', data)
-      .then((response) => response.data)
-      .then((result) => {
-        localStorage.setItem('token', result.access);
-        this.setState({
-          loggedIn: true,
-          displayedForm: '',
-          username: data.username,
-        });
-      })
-      .catch(() => {
-        this.handleLogout();
-      });
-  };
+  setAuthStatus = (authenticated) => {
+    this.setState({ isLoggedIn: authenticated });
+  }
 
-  handleLogout = () => {
-    localStorage.removeItem('token');
-    this.setState({ loggedIn: false, displayedForm: 'login', username: '' });
-  };
-
-  displayForm = (form) => {
-    this.setState({
-      displayedForm: form,
-    });
-  };
+  setUser = (user) => {
+    this.setState({ user });
+  }
 
   render() {
-    let form;
-    const { displayedForm, loggedIn, username } = this.state;
-    const greetings = `Hello ${username}`;
+    const { user, isLoggedIn, isLoggingIn } = this.state;
+    const authProps = {
+      user,
+      isLoggedIn,
+      setAuthStatus: this.setAuthStatus,
+      setUser: this.setUser,
+    };
 
-    switch (displayedForm) {
-      case 'login':
-        form = <LoginForm handleLogin={this.handleLogin} />;
-        break;
-      default:
-        form = null;
-    }
-
+    // eslint-disable-next-line react/prop-types
+    const { history } = this.props;
     return (
       <div className="App">
-        <div>
-          {loggedIn ? (
-            <div>
-              <h3>{greetings}</h3>
-              <button type="button" onClick={this.handleLogout}>Logout</button>
-              <BlogPosts handleLogout={this.handleLogout} loggedIn={loggedIn} />
-            </div>
-          ) : form}
-        </div>
+        {isLoggingIn && (
+          <p>Getting the user</p>
+        )}
+        <BrowserRouter>
+          <div>
+            <Switch>
+              <Route exact path="/login" render={() => <LoginForm history={history} authProps={authProps} />} />
+              <Route exact path="/register" render={() => <Register history={history} authProps={authProps} />} />
+            </Switch>
+          </div>
+        </BrowserRouter>
       </div>
     );
   }
