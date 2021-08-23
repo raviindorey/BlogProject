@@ -26,7 +26,7 @@ services:
       - 3000:3000
     environment:
       - CHOKIDAR_USEPOLLING=true
-      - CORSHEADER="http://localhost:8000"
+      - CORSHEADER="http://localhost:8000"  # not sure if required
       - PROXY=true
     depends_on: 
       - backend
