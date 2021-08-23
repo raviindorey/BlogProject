@@ -34,11 +34,16 @@ class Register extends Component {
     }
   };
 
-  onInputChange = (event) => {
-    this.setState({
-      [event.target.id]: event.target.value,
+  handleChange = (e) => {
+    const { name } = e.target;
+    const { value } = e.target;
+
+    this.setState((prevState) => {
+      const newState = { ...prevState };
+      newState[name] = value;
+      return newState;
     });
-  }
+  };
 
   render() {
     const {
@@ -46,79 +51,65 @@ class Register extends Component {
     } = this.state;
 
     return (
-      <section className="section auth">
-        <div className="container">
-          <h1>Register</h1>
-          <form onSubmit={this.handleSubmit}>
-            <div className="field">
-              <p className="control">
-                <input
-                  className="input"
-                  type="text"
-                  id="username"
-                  aria-describedby="userNameHelp"
-                  placeholder="Enter username"
-                  value={username}
-                  onChange={this.onInputChange}
-                />
-              </p>
-            </div>
-            <div className="field">
-              <p className="control has-icons-left has-icons-right">
-                <input
-                  className="input"
-                  type="email"
-                  id="email"
-                  aria-describedby="emailHelp"
-                  placeholder="Enter email"
-                  value={email}
-                  onChange={this.onInputChange}
-                />
-                <span className="icon is-small is-left">
-                  <i className="fas fa-envelope" />
-                </span>
-              </p>
-            </div>
-            <div className="field">
-              <p className="control has-icons-left">
-                <input
-                  className="input"
-                  type="password"
-                  id="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={this.onInputChange}
-                />
-                <span className="icon is-small is-left">
-                  <i className="fas fa-lock" />
-                </span>
-              </p>
-            </div>
-            <div className="field">
-              <p className="control has-icons-left">
-                <input
-                  className="input"
-                  type="password"
-                  id="confirmPassword"
-                  placeholder="Confirm password"
-                  value={confirmPassword}
-                  onChange={this.onInputChange}
-                />
-                <span className="icon is-small is-left">
-                  <i className="fas fa-lock" />
-                </span>
-              </p>
-            </div>
-            <div className="field">
-              <p className="control">
-                <button type="button" onClick={this.handleSubmit} className="button is-success">
-                  Register
-                </button>
-              </p>
-            </div>
-          </form>
-        </div>
-      </section>
+      <div className="row">
+        <h1>Register</h1>
+        <form onSubmit={this.handleSubmit}>
+          <div className="mb-3">
+            <label htmlFor="username" className="form-label">
+              Username
+              <input
+                type="text"
+                className="form-control"
+                name="username"
+                value={username}
+                onChange={this.handleChange}
+              />
+            </label>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="username" className="form-label">
+              Email
+              <input
+                type="email"
+                className="form-control"
+                name="email"
+                value={email}
+                onChange={this.handleChange}
+              />
+            </label>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">
+              Password
+              <input
+                type="password"
+                className="form-control"
+                name="password"
+                value={password}
+                onChange={this.handleChange}
+              />
+            </label>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">
+              Confirm Password
+              <input
+                type="password"
+                className="form-control"
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={this.handleChange}
+              />
+            </label>
+          </div>
+          <input
+            type="submit"
+            className="btn btn-primary"
+            onClick={this.handleSubmit}
+            value="Register"
+          />
+        </form>
+      </div>
     );
   }
 }

@@ -30,10 +30,8 @@ class LoginForm extends Component {
     const { setUser, setAuthStatus } = authProps;
     try {
       const userObj = await Auth.signIn(username, password);
-      // console.log(userObj);
       setAuthStatus(true);
       setUser(userObj);
-      // history.push("/");
       this.setState({
         username: '',
         password: '',
@@ -43,52 +41,41 @@ class LoginForm extends Component {
     }
   };
 
-  handleLogout = async (event) => {
-    event.preventDefault();
-    Auth.signOut();
-    const { authProps } = this.props;
-    const { setUser, setAuthStatus } = authProps;
-    setUser(null);
-    setAuthStatus(false);
-  }
-
   render() {
     const { username, password } = this.state;
-    const { authProps } = this.props;
-    const { isLoggedIn, user } = authProps;
     return (
-      <div>
-        { isLoggedIn && (
-          <div>
-            <h3>
-              { user && `Hello ${user.username}` }
-            </h3>
-            <button type="button" onClick={this.handleLogout}>
-              Logout
-            </button>
-          </div>
-        )}
+      <div className="row">
         <form>
-          <h4>Login</h4>
-          <label htmlFor="username">
-            Username
-            <input
-              type="text"
-              name="username"
-              value={username}
-              onChange={this.handleChange}
-            />
-          </label>
-          <label htmlFor="password">
-            Password
-            <input
-              type="password"
-              name="password"
-              value={password}
-              onChange={this.handleChange}
-            />
-          </label>
-          <input type="submit" onClick={this.handleSubmit} value="Login" />
+          <div className="mb-3">
+            <label htmlFor="username" className="form-label">
+              Username
+              <input
+                type="text"
+                className="form-control"
+                name="username"
+                value={username}
+                onChange={this.handleChange}
+              />
+            </label>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">
+              Password
+              <input
+                type="password"
+                className="form-control"
+                name="password"
+                value={password}
+                onChange={this.handleChange}
+              />
+            </label>
+          </div>
+          <input
+            type="submit"
+            className="btn btn-primary"
+            onClick={this.handleSubmit}
+            value="Login"
+          />
         </form>
 
       </div>
